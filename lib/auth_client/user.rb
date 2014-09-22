@@ -4,7 +4,7 @@ class User
   def self.find_by(id: nil)
     return nil unless id
 
-    RedisUserConnector.get(id).merge('id' => id)
+    new RedisUserConnector.get(id).merge('id' => id)
   end
 
   def initialize(options)
