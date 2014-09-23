@@ -1,5 +1,8 @@
 require 'auth_redis_user_connector'
 
+require 'validates_email_format_of'
+require File.join(Dir.pwd, 'app', 'models', 'permission.rb')
+
 module AuthClient
   class User
     def self.find_by(id: nil)
@@ -19,5 +22,18 @@ module AuthClient
       [surname, name, patronymic].compact.join(' ')
     end
 
+    def permissions
+      ::Permission.where :user_id => id
+    end
+
+    ::Permission.available_roles.each do |role|
+      define_method "#{role}_of?" do |context|
+        permissions.for_role(role).for_context(context).exists?
+      end
+
+      define_method "#{role}?" do
+        permissions.for_role(role).exists?
+      end
+    end
   end
 end

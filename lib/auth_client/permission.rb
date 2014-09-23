@@ -21,28 +21,6 @@ module AuthClient
 
         validates_inclusion_of :role, :in => available_roles + available_roles.map(&:to_sym)
         validates_presence_of :role
-
-        permissionize_user
-      end
-
-      private
-
-      def permissionize_user
-        AuthClient::User.class_eval do
-          def permissions
-            ::Permission.where :user_id => id
-          end
-
-          ::Permission.available_roles.each do |role|
-            define_method "#{role}_of?" do |context|
-              permissions.for_role(role).for_context(context).exists?
-            end
-
-            define_method "#{role}?" do
-              permissions.for_role(role).exists?
-            end
-          end
-        end
       end
     end
   end
