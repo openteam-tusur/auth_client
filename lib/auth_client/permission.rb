@@ -24,12 +24,12 @@ module AuthClient
       private
 
       def permissionize_user
-        User.class_eval do
+        AuthClient::User.class_eval do
           def permissions
-            self.where :user_id => id
+            ::Permission.where :user_id => id
           end
 
-          available_roles.each do |role|
+          ::Permission.available_roles.each do |role|
             define_method "#{role}_of?" do |context|
               permissions.for_role(role).for_context(context).exists?
             end
