@@ -4,6 +4,10 @@ module AuthClient
   module Permission
     extend ActiveSupport::Concern
 
+    def user
+      User.find_by id: user_id
+    end
+
     module ClassMethods
       def acts_as_auth_client_permission(roles: roles)
         define_singleton_method :available_roles do
