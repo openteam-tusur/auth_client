@@ -1,7 +1,5 @@
 # AuthClient
 
-TODO: Write a gem description
-
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -11,19 +9,9 @@ Add this line to your application's Gemfile:
 And then execute:
 
     $ bundle
+    
+Run generator:
 
-Or install it yourself as:
+    bundle exec rails generate auth_client:install
 
-    $ gem install auth_client
-
-## Usage
-
-TODO: Write usage instructions here
-
-## Contributing
-
-1. Fork it ( https://github.com/[my-github-username]/auth_client/fork )
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create a new Pull Request
+Modify created **app/models/user.rb** and **app/models/permission.rb** 
