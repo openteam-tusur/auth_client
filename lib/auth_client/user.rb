@@ -40,6 +40,9 @@ module AuthClient
       permissions.map { |p| { :role => p.role, :info => p.context.try(:to_s) }}
     end
 
+    def after_signied_in
+    end
+
     module ClassMethods
       def acts_as_auth_client_user
         define_method :permissions do
