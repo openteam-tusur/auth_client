@@ -13,5 +13,23 @@ And then execute:
 Run generator:
 
     bundle exec rails generate auth_client:install
+    
+Or use similar models
 
-Modify created **app/models/user.rb** and **app/models/permission.rb** 
+```ruby
+class User
+  include AuthClient::User
+  
+  # your code goes here
+end
+```
+
+```ruby
+class Permission < ActiveRecord::Base
+  include AuthClient::Permission
+
+  acts_as_auth_client_permission roles: [:admin]
+  
+  # your code goes here
+end
+```
