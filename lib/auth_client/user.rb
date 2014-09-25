@@ -17,6 +17,26 @@ module AuthClient
       to_s
     end
 
+    def check_app_name
+      raise 'User#app_name should not be blank' if app_name.blank?
+    end
+
+    def activity_notify
+      check_app_name
+
+      RedisUserConnector.set id, "#{app_name}_last_activity", Time.zone.now.to_i
+    end
+
+    def info_notify
+      check_app_name
+
+      RedisUserConnector.set id, "#{app_name}_info", permissions_info.to_json
+    end
+
+    def permissions_info
+      permissions.map { |p| { :role => p.role, :info => p.context.try(:to_s) }}
+    end
+
     module ClassMethods
       def acts_as_auth_client_user
         define_method :permissions do

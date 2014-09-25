@@ -46,6 +46,8 @@ module AuthClient
           session.clear
         else
           session['warden.user.user.session']['last_request_at'] = Time.zone.now.to_i
+
+          current_user.activity_notify if current_user
         end
       end
     end
