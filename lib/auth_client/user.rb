@@ -41,6 +41,7 @@ module AuthClient
     end
 
     def after_signied_in
+      info_notify
     end
 
     module ClassMethods
