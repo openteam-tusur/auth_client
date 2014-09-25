@@ -17,6 +17,9 @@ module AuthClient
       to_s
     end
 
+    def app_name
+    end
+
     def check_app_name
       raise 'User#app_name should not be blank' if app_name.blank?
     end
