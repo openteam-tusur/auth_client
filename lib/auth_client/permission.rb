@@ -5,7 +5,7 @@ module AuthClient
     extend ActiveSupport::Concern
 
     def user
-      User.find_by id: user_id
+      ::User.find_by id: user_id
     end
 
     module ClassMethods

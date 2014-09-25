@@ -1,36 +1,59 @@
+require 'active_support/concern'
 require 'auth_redis_user_connector'
 
 module AuthClient
-  class User
-    def self.find_by(id: nil)
-      return nil unless id
+  module User
+    extend ActiveSupport::Concern
 
-      redis_data = RedisUserConnector.get(id)
-
-      return nil if redis_data.empty?
-
-      new redis_data.merge(:id => id)
-    end
-
-    def initialize(options)
-      options.each_pair do |key, val|
-        self.class_eval("def #{key}; @#{key}; end")
-        self.instance_variable_set "@#{key}", val
-      end
+    included do
+      acts_as_auth_client_user
     end
 
     def to_s
       [surname, name, patronymic].compact.join(' ')
     end
 
-    def permissions
-      ::Permission.where :user_id => id
+    def fullname
+      to_s
     end
 
-    def has_permission?(role:, context: nil)
-      context ?
-        permissions.for_role(role).for_context(context).exists? :
-        permissions.for_role(role).exists?
+    module ClassMethods
+      def acts_as_auth_client_user
+        define_method :permissions do
+          ::Permission.where :user_id => id
+        end
+
+        define_method(:has_permission?) do |role:, context: nil|
+          context ?
+            permissions.for_role(role).for_context(context).exists? :
+            permissions.for_role(role).exists?
+        end
+      end
+
+      def find_by(id:)
+        redis_data = RedisUserConnector.get(id)
+
+        return nil if redis_data.empty?
+
+        attributes = redis_data.merge(:id => id)
+
+        build_user attributes
+      end
+
+      private
+
+      def build_user(attributes)
+        new.tap do |user|
+          attributes.each do |attribute, value|
+            name = "@#{attribute}"
+            user.instance_variable_set name, value
+
+            user.define_singleton_method attribute do
+              instance_variable_get name
+            end
+          end
+        end
+      end
     end
   end
 end
