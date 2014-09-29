@@ -14,6 +14,11 @@ module AuthClient
           roles.map(&:to_s)
         end
 
+        delegate :info_notify, :to => :user, :prefix => true, :allow_nil => true
+
+        after_destroy :user_info_notify
+        after_save :user_info_notify
+
         belongs_to :context, :polymorphic => true
 
         scope :for_role, ->(role) { where(:role => role)  }
