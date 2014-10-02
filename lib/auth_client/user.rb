@@ -72,7 +72,7 @@ module AuthClient
       def find_by(id:)
         redis_data = RedisUserConnector.get(id)
 
-        return nil if redis_data.empty?
+        return nil if (redis_data.nil? || redis_data.empty?)
 
         attributes = redis_data.merge(:id => id)
 

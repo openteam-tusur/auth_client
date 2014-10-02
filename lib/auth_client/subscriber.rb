@@ -7,17 +7,26 @@ module AuthClient
       namespace :subscriber do
         desc 'Start listen channel'
         task :start => :environment do
-          Daemons.call(:app_name => 'subscriber', :multiple => false,   :dir_mode   => :normal, :dir => "tmp/pids", :log_dir => "log") do
-            RedisUserConnector.sub('broadcast') do |on|
-              on.subscribe do
-                Rails.logger.info 'Subscribed to broadcast'
-              end
+          Daemons.call(:app_name => 'subscriber', :multiple => false, :dir_mode => 'normal', :dir => 'tmp/pids') do
+            logger = Logger.new("#{Rails.root}/log/subscriber.log")
 
-              on.message do |_, message|
-                Rails.logger.info "Recieved message about user <#{message}> signed in"
-                user = ::User.find_by(:id => message )
-                user.after_signied_in if user
+            begin
+              RedisUserConnector.sub('broadcast') do |on|
+                on.subscribe    do
+                  logger.info 'Subscribed to broadcast channel'
+                end
+
+                on.message      do |_, message|
+                  logger.info "Recieved message about user <#{message}> signed in"
+                  ::User.find_by(:id => message).try :after_signied_in
+                end
+
+                on.unsubscribe  do
+                  logger.info 'Unsubscribed from broadcast channel'
+                end
               end
+            rescue Exception => e
+              logger.fatal e
             end
           end
         end
