@@ -33,7 +33,11 @@ module AuthClient
     def info_notify
       check_app_name
 
-      RedisUserConnector.set id, "#{app_name}_info", { :permissions => permissions_info, :url => "https://#{app_name}.tusur.ru/" }.to_json
+      RedisUserConnector.set id, "#{app_name}_info", info_hash.to_json
+    end
+
+    def info_hash
+      { :permissions => permissions_info, :url => "https://#{app_name}.tusur.ru/" }
     end
 
     def permissions_info
