@@ -7,7 +7,7 @@ module AuthClient
       namespace :subscriber do
         desc 'Start listen channel'
         task :start => :environment do
-          Daemons.call(:app_name => 'subscriber', :multiple => false, :dir_mode => 'normal', :dir => 'tmp/pids') do
+          Daemons.call(:app_name => 'subscriber', :multiple => false, :dir_mode => :normal, :dir => 'tmp/pids') do
             logger = Logger.new("#{Rails.root}/log/subscriber.log")
 
             begin
