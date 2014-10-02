@@ -48,6 +48,14 @@ module AuthClient
       info_notify
     end
 
+    def last_activity_at
+      return nil if app_name.blank?
+
+      seconds = instance_variable_get("@#{app_name}_last_activity").to_i
+
+      Time.at(seconds)
+    end
+
     module ClassMethods
       def acts_as_auth_client_user
         define_method :permissions do
