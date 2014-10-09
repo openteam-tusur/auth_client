@@ -17,6 +17,15 @@ module AuthClient
       to_s
     end
 
+    def short_name
+      res = []
+      res << surname
+      res << "#{name.first}." if name.present?
+      res << "#{patronymic.first}." if patronymic.present?
+
+      res.join(' ')
+    end
+
     def app_name
     end
 
