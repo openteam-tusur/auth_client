@@ -18,7 +18,7 @@ module AuthClient
 
                 on.message      do |_, message|
                   logger.info "Recieved message about user <#{message}> signed in"
-                  ::User.find_by(:id => message).try :after_signied_in
+                  ::User.find_by(:id => message).try :after_signed_in
                 end
 
                 on.unsubscribe  do
