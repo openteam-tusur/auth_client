@@ -44,7 +44,7 @@ module AuthClient
       permissions.map { |p| { :role => p.role, :info => p.context.try(:to_s) }}
     end
 
-    def after_signied_in
+    def after_signed_in
       info_notify
     end
 
