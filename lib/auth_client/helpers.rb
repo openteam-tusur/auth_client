@@ -18,7 +18,9 @@ module AuthClient
     end
 
     def sign_in_url
-      uri = URI.parse(Settings['auth_server.sign_in_url'])
+      raise 'Error::Settings: <app.sign_in_url> is undefined' if Settings['app.sign_in_url'].blank?
+
+      uri = URI.parse(Settings['app.sign_in_url'])
 
       uri.query = { :redirect_url => request.original_url }.to_query
 
@@ -26,7 +28,9 @@ module AuthClient
     end
 
     def sign_out_url
-      uri = URI.parse(Settings['auth_server.sign_out_url'])
+      raise 'Error::Settings: <app.sign_out_url> is undefined' if Settings['app.sign_out_url'].blank?
+
+      uri = URI.parse(Settings['app.sign_out_url'])
 
       uri.query = { :redirect_url => request.original_url }.to_query
 
