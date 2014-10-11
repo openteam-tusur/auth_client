@@ -46,7 +46,7 @@ module AuthClient
     end
 
     def info_hash
-      { :permissions => permissions_info, :url => "https://#{app_name}.tusur.ru/" }
+      permissions_info.any? ? { :permissions => permissions_info, :url => "https://#{app_name}.tusur.ru/"} : {}
     end
 
     def permissions_info
