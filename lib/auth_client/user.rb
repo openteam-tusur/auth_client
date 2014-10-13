@@ -33,16 +33,24 @@ module AuthClient
       raise 'User#app_name should not be blank' if app_name.blank?
     end
 
+    def get_info
+      RedisUserConnector.get id
+    end
+
+    def set_info(*args)
+      RedisUserConnector.set id, *args
+    end
+
     def activity_notify
       check_app_name
 
-      RedisUserConnector.set id, "#{app_name}_last_activity", Time.zone.now.to_i
+      set_info "#{app_name}_last_activity", Time.zone.now.to_i
     end
 
     def info_notify
       check_app_name
 
-      RedisUserConnector.set id, "#{app_name}_info", info_hash.to_json
+      set_info "#{app_name}_info", info_hash.to_json
     end
 
     def info_hash
@@ -79,21 +87,29 @@ module AuthClient
       end
 
       def find_by(id:)
-        redis_data = RedisUserConnector.get(id)
+        redis_info = RedisUserConnector.get(id)
 
-        return nil if (redis_data.nil? || redis_data.empty?)
+        return nil if (redis_info.nil? || redis_info.empty?)
 
-        attributes = redis_data.merge(:id => id)
+        attributes = redis_info.merge(:id => id)
 
         build_user attributes
       end
 
       private
 
+      def is_json?(obj)
+        !!JSON.parse(obj)
+      rescue
+        false
+      end
+
       def build_user(attributes)
         new.tap do |user|
-          attributes.each do |attribute, value|
+          attributes.each do |attribute, raw_value|
             name = "@#{attribute}"
+            value = is_json?(raw_value) ? JSON.parse(raw_value) : raw_value
+
             user.instance_variable_set name, value
 
             user.define_singleton_method attribute do
