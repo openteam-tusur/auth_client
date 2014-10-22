@@ -54,7 +54,7 @@ module AuthClient
     end
 
     def info_hash
-      permissions_info.any? ? { :permissions => permissions_info, :url => {:link => "https://#{app_name}.tusur.ru/", :title => I18n.t('app.title')}} : {}
+      permissions_info.any? ? { :permissions => permissions_info, :url => {:link => "#{Settings['app.url']}/", :title => I18n.t('app.title')}} : {}
     end
 
     def permissions_info
