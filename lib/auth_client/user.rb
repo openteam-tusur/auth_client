@@ -10,7 +10,7 @@ module AuthClient
     end
 
     def to_s
-      [surname, name, patronymic].compact.join(' ')
+      [surname, name, patronymic].compact.join(' ').squish
     end
 
     def fullname
