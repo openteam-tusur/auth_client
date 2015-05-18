@@ -9,7 +9,7 @@ module AuthClient
     end
 
     module ClassMethods
-      def acts_as_auth_client_permission(roles: roles)
+      def acts_as_auth_client_permission(roles: [])
         define_singleton_method :available_roles do
           roles.map(&:to_s)
         end
