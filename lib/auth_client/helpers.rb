@@ -60,6 +60,7 @@ end
 
 ActiveSupport.on_load :action_controller do
   include AuthClient::Helpers
-
-  helper_method :current_user, :user_signed_in?, :sign_in_url, :sign_out_url
+  if respond_to? :helper_method
+    helper_method :current_user, :user_signed_in?, :sign_in_url, :sign_out_url
+  end
 end
