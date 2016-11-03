@@ -1,7 +1,9 @@
 class User
   include AuthClient::User
 
+  acts_as_auth_client_user
+
   def app_name
-    Settings['app.host'].to_s.parameterize('_')
+    'change_this_to_app_name'
   end
 end

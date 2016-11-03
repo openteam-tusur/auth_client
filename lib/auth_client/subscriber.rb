@@ -6,8 +6,8 @@ module AuthClient
     rake_tasks do
       namespace :subscriber do
         desc 'Start listen channel'
-        task :start => :environment do
-          Daemons.call(:app_name => 'subscriber', :multiple => false, :dir_mode => :normal, :dir => 'tmp/pids') do
+        task start: :environment do
+          Daemons.call(app_name: 'subscriber', multiple: false, dir_mode: :normal, dir: 'tmp/pids') do
             logger = Logger.new("#{Rails.root}/log/subscriber.log")
 
             begin
@@ -18,7 +18,7 @@ module AuthClient
 
                 on.message      do |_, message|
                   logger.info "Recieved message about user <#{message}> signed in"
-                  ::User.find_by(:id => message).try :after_signed_in
+                  ::User.find_by(id: message).try :after_signed_in
                 end
 
                 on.unsubscribe  do
@@ -32,12 +32,12 @@ module AuthClient
         end
 
         desc 'Stop listen channel'
-        task :stop => :environment do
+        task stop: :environment do
           Daemons::Monitor.find('tmp/pids', 'subscriber').try :stop
         end
 
         desc 'Restart subscriber'
-        task :restart => :environment do
+        task restart: :environment do
           Rake::Task['subscriber:stop'].invoke
           Rake::Task['subscriber:start'].invoke
         end

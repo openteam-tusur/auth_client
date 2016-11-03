@@ -22,7 +22,7 @@ module AuthClient
 
       uri = URI.parse(Settings['profile.sign_in_url'])
 
-      uri.query = { :redirect_url => request.original_url }.to_query
+      uri.query = { redirect_url: request.original_url }.to_query
 
       uri.to_s
     end
@@ -32,7 +32,7 @@ module AuthClient
 
       uri = URI.parse(Settings['profile.sign_out_url'])
 
-      uri.query = { :redirect_url => request.original_url }.to_query
+      uri.query = { redirect_url: request.original_url }.to_query
 
       uri.to_s
     end
@@ -46,7 +46,8 @@ module AuthClient
     def check_session
       if session['warden.user.user.session']
         last_request_at = session['warden.user.user.session']['last_request_at']
-        if Time.zone.now.to_i - last_request_at > 1800
+        timeout_in = current_user.timeout_in.to_i rescue 1800
+        if Time.zone.now.to_i - last_request_at > timeout_in
           session.clear
         else
           session['warden.user.user.session']['last_request_at'] = Time.zone.now.to_i

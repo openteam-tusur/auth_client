@@ -10,11 +10,15 @@ module AuthClient
     end
 
     def to_s
-      [surname, name, patronymic].compact.join(' ').squish
+      fullname
     end
 
     def fullname
-      to_s
+      [
+        surname,
+        name,
+        patronymic
+      ].delete_if(&:blank?).join(' ').squish
     end
 
     def short_name
@@ -54,11 +58,11 @@ module AuthClient
     end
 
     def info_hash
-      permissions_info.any? ? { :permissions => permissions_info, :url => {:link => "#{Settings['app.url']}/", :title => I18n.t('app.title')}} : {}
+      permissions_info.any? ? { permissions: permissions_info, url: { link: "#{Settings['app.url']}/", title: I18n.t('app.title') } } : {}
     end
 
     def permissions_info
-      permissions.map { |p| { :role => p.role, :info => p.context.try(:to_s) }}
+      permissions.map { |p| { role: p.role, info: p.context.try(:to_s) }}
     end
 
     def after_signed_in
@@ -76,7 +80,7 @@ module AuthClient
     module ClassMethods
       def acts_as_auth_client_user
         define_method :permissions do
-          ::Permission.where :user_id => id
+          @permissions ||= ::Permission.where user_id: id
         end
 
         define_method(:has_permission?) do |role:, context: nil|
@@ -84,6 +88,11 @@ module AuthClient
             permissions.for_role(role).for_context(context).exists? :
             permissions.for_role(role).exists?
         end
+
+        ::Permission.available_roles.each do |role|
+          define_method("#{role}?") { permissions.map(&:role).include? role }
+        end
+
       end
 
       def find_by(id:)
@@ -91,7 +100,7 @@ module AuthClient
 
         return nil if (redis_info.nil? || redis_info.empty?)
 
-        attributes = redis_info.merge(:id => id)
+        attributes = redis_info.merge(id: id)
 
         build_user attributes
       end

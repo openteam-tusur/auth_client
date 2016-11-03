@@ -14,17 +14,17 @@ module AuthClient
           roles.map(&:to_s)
         end
 
-        delegate :info_notify, :to => :user, :prefix => true, :allow_nil => true
+        delegate :info_notify, to: :user, prefix: true, allow_nil: true
 
         after_destroy :user_info_notify
         after_save :user_info_notify
 
-        belongs_to :context, :polymorphic => true
+        belongs_to :context, polymorphic: true
 
-        scope :for_role, ->(role) { where(:role => role)  }
-        scope :for_context, ->(context) { where(:context_id => context.try(:id), :context_type => context.try(:class))  }
+        scope :for_role, ->(role) { where(role: role)  }
+        scope :for_context, ->(context) { where(context_id: context.try(:id), context_type: context.try(:class)) }
 
-        validates_inclusion_of :role, :in => available_roles + available_roles.map(&:to_sym)
+        validates_inclusion_of :role, in: available_roles + available_roles.map(&:to_sym)
         validates_presence_of :role
       end
     end
