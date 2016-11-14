@@ -89,8 +89,10 @@ module AuthClient
             permissions.for_role(role).exists?
         end
 
-        ::Permission.available_roles.each do |role|
-          define_method("#{role}?") { permissions.map(&:role).include? role }
+        if Object.const_defined?('::Permission')
+          ::Permission.available_roles.each do |role|
+            define_method("#{role}?") { permissions.map(&:role).include? role }
+          end
         end
 
       end
