@@ -46,7 +46,7 @@ module AuthClient
     def check_session
       if session['warden.user.user.session']
         last_request_at = session['warden.user.user.session']['last_request_at']
-        timeout_in = current_user.timeout_in.to_i rescue 1800
+        timeout_in = current_user.timeout_in.to_i rescue 7.days
         if Time.zone.now.to_i - last_request_at > timeout_in
           session.clear
         else
